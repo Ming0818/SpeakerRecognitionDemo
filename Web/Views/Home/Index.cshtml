@@ -1,0 +1,86 @@
+﻿@model List<UserProfile>
+@{
+    ViewData["Title"] = "Profiles";
+}
+@section Scripts {
+    <script src="https://cdn.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/gumadapter.js"></script>
+    <script src="~/js/recorder.js"></script>
+}
+@*<audio id="audio-player" controls>
+
+</audio>*@
+
+<div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+    
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#create-modal">
+        New profile
+    </button>
+</div>
+
+<div class="row">
+    <table id="profile-list" class="table table-bordered table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Audio</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var profile in Model.OrderBy(i => i.Description))
+            {
+                var parsed = profile.AzureProfile.ParsedDuration.ToString("###0");
+                var needed = profile.AzureProfile.NeededDuration.ToString("###0");
+                <tr>
+                    <td>@profile.Description</td>
+                    <td>
+                        <div>
+                            <button class="btn bg-info btn-xs start-rec" data-id="@profile.Id" style="min-width: 50px">Rec</button>
+                            <span class="info-block"></span>
+                        </div>
+                        Parsed: @parsed secs; Needed: @needed secs
+                    </td>
+                    <td>@profile.AzureProfile.Status</td>
+                    <td>
+                        <a class="btn btn-danger btn-xs" asp-action="DeleteProfile" asp-route-id="@profile.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <div>
+        <label>Who Am I?</label>
+        <button class="btn bg-info btn-xs start-rec" style="min-width: 50px">Rec</button>
+        <span class="info-block"></span>
+    </div>
+    
+
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="create-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form asp-controller="Home" asp-action="AddProfile">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Create new profile</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" placeholder="Enter profile description" name="description" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
